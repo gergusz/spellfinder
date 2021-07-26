@@ -8,7 +8,6 @@ from multiprocessing.dummy import Pool as ThreadPool
 from functools import partial
 import PySimpleGUI as sg
 from PIL import Image
-#print("Importok betöltve!")
 
 sg.theme('DarkTeal6') #SimplePyGUI theme
 cass.set_default_region("EUNE") #Cassiopeia Region
@@ -28,7 +27,6 @@ pontok = 0
 champability = ""
 champ = "gyenge ember vagyok akinek szüksége van egy ingyen pontra"
 randomspell = ""
-#print("Változók betöltve! ")
 
 def empty64x64(): #default kép és hardmode kép létrehozó
     if os.path.isfile(workingdir+"default.png") is False:
@@ -144,42 +142,33 @@ def champlistcreate(): #Létrehozza a legutolsó patchen szereplő champek list�
         for champion in champions:
             ch = champion.name
             champlist.append(ch)
-            #print(ch+" hozzáadva a champlisthez!")
     else:
         pass
-    #print("Teljes champlist:"+ str(champlist))
 
 def workingdircreate(): #Létrehozza a workingdirt ha nem létezik, ha létezik nem csinál semmit
     if not os.path.exists(workingdir):
-        #print(workingdir+" nem létezik, létrehozás...")
         os.makedirs(workingdir)
-        #print(workingdir+" sikeresen létrehozva!")
     else:
-        #print(workingdir+" mappa már létezik, kihagyás...")
         pass
 
 def abilitydl(champion,ability): #Letölti az adott champnek az abilityképeit
     try:
         open(workingdir+beautify(champion)+"_{}.png".format(ability))
     except FileNotFoundError:
-        #print(beautify(champion)+"_{}.png nem létezik, letöltés...".format(ability))
         champurl = abilityurl.replace("champion_name",beautify(champion))+"{}".format(ability)
         img_data = requests.get(champurl).content
         with open(workingdir+beautify(champion)+"_{}.png".format(ability), 'wb') as handler:
             handler.write(img_data)
-            #print(beautify(champion)+"_{}.png letöltve!".format(ability))
             handler.close()
 
 def champpicdl(champion): #Letölti az adott champ képét
     try:
         open(workingdir+beautify(champion)+".png")
     except FileNotFoundError:
-        #print(beautify(champion)+".png nem létezik, letöltés...")
         champurl = squareurl.replace("champion_name",beautify(champion))
         img_data = requests.get(champurl).content
         with open (workingdir+beautify(champion)+".png", 'wb') as handler:
             handler.write(img_data)
-            #print(beautify(champion)+".png letöltve!")
             handler.close()
 
 def parallel(letter): #Párhuzamossá teszi az abilityletöltéseket
@@ -189,7 +178,6 @@ def parallel(letter): #Párhuzamossá teszi az abilityletöltéseket
 def d156(): #eldob egy 156 oldalú dobókockát, visszaad egy oldalt (béna vagy mátétea)
     champlistcreate()
     choice = random.choice(champlist)
-    #print(choice+" lett a választott champ!")
     return choice
 
 def reroll(): #main logic
@@ -271,7 +259,6 @@ champlistcreate()
 workingdircreate()
 empty64x64()
 picdlwithpool()
-#print("Pictures loaded")
 
 tab1_layout = [ #Játék tab
         [sg.Text(text="Kattints a Reroll gombra!",enable_events=True,key='champnev',size=(25,1)),
