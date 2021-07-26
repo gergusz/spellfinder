@@ -7,7 +7,6 @@ import os
 from multiprocessing.dummy import Pool as ThreadPool
 import PySimpleGUI as sg
 from PIL import Image
-import time
 
 sg.theme('DarkTeal6') #SimplePyGUI theme
 cass.set_default_region("EUNE") #Cassiopeia Region
