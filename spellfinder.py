@@ -5,7 +5,6 @@ import requests
 from PIL import *
 import os
 from multiprocessing.dummy import Pool as ThreadPool
-from functools import partial
 import PySimpleGUI as sg
 from PIL import Image
 
@@ -20,7 +19,7 @@ dirpath = os.path.dirname(os.path.realpath(__file__)) #directory ahol fut a scri
 workingdir = dirpath+"\pics\\" #képek helye
 champlist = [] #ide kerülnek majd a champek
 abilityletters = ["p","q","w","e","r"] #elfogadható ability keyek (kisbetű, passzívval együtt)
-pool = ThreadPool(20) #20 szálon futnak a threadelhető dolgok
+pool = ThreadPool(os.cpu_count()) #thread
 title = "Spellfinder" #GUI title
 global pontok
 pontok = 0
@@ -151,15 +150,16 @@ def workingdircreate(): #Létrehozza a workingdirt ha nem létezik, ha létezik 
     else:
         pass
 
-def abilitydl(champion,ability): #Letölti az adott champnek az abilityképeit
-    try:
-        open(workingdir+beautify(champion)+"_{}.png".format(ability))
-    except FileNotFoundError:
-        champurl = abilityurl.replace("champion_name",beautify(champion))+"{}".format(ability)
-        img_data = requests.get(champurl).content
-        with open(workingdir+beautify(champion)+"_{}.png".format(ability), 'wb') as handler:
-            handler.write(img_data)
-            handler.close()
+def abilitydl(champion): #Letölti az adott champnek az abilityképeit
+    for ability in abilityletters:
+        try:
+            open(workingdir+beautify(champion)+"_{}.png".format(ability))
+        except FileNotFoundError:
+            champurl = abilityurl.replace("champion_name",beautify(champion))+"{}".format(ability)
+            img_data = requests.get(champurl).content
+            with open(workingdir+beautify(champion)+"_{}.png".format(ability), 'wb') as handler:
+                handler.write(img_data)
+                handler.close()
 
 def champpicdl(champion): #Letölti az adott champ képét
     try:
@@ -170,10 +170,6 @@ def champpicdl(champion): #Letölti az adott champ képét
         with open (workingdir+beautify(champion)+".png", 'wb') as handler:
             handler.write(img_data)
             handler.close()
-
-def parallel(letter): #Párhuzamossá teszi az abilityletöltéseket
-    abilityletter = partial(abilitydl, ability=letter)
-    pool.map(abilityletter,champlist)
 
 def d156(): #eldob egy 156 oldalú dobókockát, visszaad egy oldalt (béna vagy mátétea)
     champlistcreate()
@@ -213,12 +209,6 @@ def pontupdate(): #pontupdate (nice)
     else:
         window['pontoktext'].update("Pontjaid: {}".format(str(pontok)))
 
-def picdlwithpool(): #"gyors" képletöltés
-    champlistcreate()
-    pool.map(champpicdl,champlist)
-    pool.map(parallel,abilityletters)
-    pool.close()
-
 def compare(comp1,comp2): #összehasonlítás
     if str(comp1).lower() == str(beautify(comp2)).lower():
         return True
@@ -255,10 +245,18 @@ def decpontok(): #-1 pont ha pontok > 0
     if pontok > 0:
         pontok = pontok - 1
 
-champlistcreate()
-workingdircreate()
-empty64x64()
-picdlwithpool()
+def firstsetup():
+    if not os.path.exists(workingdir):
+        champlistcreate()
+        workingdircreate()
+        empty64x64()
+        sg.Popup("Nem találtam ability képeket!","Letöltés folyamatban, kérlek várj!",title=title)
+        pool.map(abilitydl,champlist)
+        pool.close()
+    else:
+        pass
+
+firstsetup()
 
 tab1_layout = [ #Játék tab
         [sg.Text(text="Kattints a Reroll gombra!",enable_events=True,key='champnev',size=(25,1)),
