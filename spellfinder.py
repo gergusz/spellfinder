@@ -24,7 +24,7 @@ title = "Spellfinder" #GUI title
 global pontok
 pontok = 0
 champability = ""
-champ = "gyenge ember vagyok akinek szüksége van egy ingyen pontra"
+champ = random.randbytes(5)
 randomspell = ""
 
 def empty64x64(): #default kép és hardmode kép létrehozó
