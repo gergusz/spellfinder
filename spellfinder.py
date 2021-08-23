@@ -15,8 +15,7 @@ global locale
 locale = "hu_HU" #alap locale, language_region formattal
 squareurl = "https://cdn.communitydragon.org/latest/champion/champion_name/square" #Champképek urlje communitydragonról
 abilityurl = "https://cdn.communitydragon.org/latest/champion/champion_name/ability-icon/" #Abilityképek urlje communitydragonról
-dirpath = os.path.dirname(os.path.realpath(__file__)) #directory ahol fut a script
-workingdir = dirpath+"\pics\\" #képek helye
+workingdir = os.getenv('APPDATA')+"\Spellfinder\pics\\" #képek helye
 champlist = [] #ide kerülnek majd a champek
 abilityletters = ["p","q","w","e","r"] #elfogadható ability keyek (kisbetű, passzívval együtt)
 pool = ThreadPool(os.cpu_count()) #thread
