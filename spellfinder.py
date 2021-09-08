@@ -1,4 +1,5 @@
 import random
+import sys
 import requests
 from PIL import *
 import os
@@ -7,13 +8,15 @@ import PySimpleGUI as sg
 from PIL import Image
 import csv
 from functools import partial
+import argparse
+import shutil
 
 sg.theme('DarkTeal6') #SimplePyGUI theme
 global locale
 locale = "hu_HU" #alap locale, language_region formattal
 squareurl = "https://cdn.communitydragon.org/latest/champion/champion_name/square" #Champképek urlje communitydragonról
 abilityurl = "https://cdn.communitydragon.org/latest/champion/champion_name/ability-icon/" #Abilityképek urlje communitydragonról
-workingdir = os.getenv('APPDATA')+"\\Spellfinder\\" #képek helye
+workingdir = os.getenv('APPDATA')+"\\Spellfinder\\"
 abilityletters = ["p","q","w","e","r"] #elfogadható ability keyek (kisbetű, passzívval együtt)
 pool = ThreadPool(os.cpu_count()) #thread
 title = "Spellfinder" #GUI title
@@ -28,6 +31,13 @@ ver = latest.json()[0]
 global champlist
 champlist = list()
 languagelist = ["en_US","hu_HU"]
+parser = argparse.ArgumentParser()
+parser.add_argument("--uninstall", help="Removes all folders and files that Spellfinder creates", action="store_true")
+args = parser.parse_args()
+
+if args.uninstall is True:
+    shutil.rmtree(workingdir)
+    sys.exit()
 
 def beautify(ugly): #Formázza a champneveket ahol különleges (és Wukongnál)
     return { 
